@@ -20,6 +20,7 @@ function App() {
 
   return (
     <>
+      <h1> Front crm</h1>
       <button onClick={() => setShowJson(!showJson)}>
         {showJson ? "Hide" : "Show"} JSON
       </button>
