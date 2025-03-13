@@ -32,8 +32,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -95,12 +103,18 @@ type Item = {
 
 // Custom filter function for multi-column searching
 const multiColumnFilterFn: FilterFn<Item> = (row, columnId, filterValue) => {
-  const searchableRowContent = `${row.original.name} ${row.original.email}`.toLowerCase();
+  void columnId;
+  const searchableRowContent =
+    `${row.original.name} ${row.original.email}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
 
-const statusFilterFn: FilterFn<Item> = (row, columnId, filterValue: string[]) => {
+const statusFilterFn: FilterFn<Item> = (
+  row,
+  columnId,
+  filterValue: string[]
+) => {
   if (!filterValue?.length) return true;
   const status = row.getValue(columnId) as string;
   return filterValue.includes(status);
@@ -112,7 +126,8 @@ const columns: ColumnDef<Item>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -132,7 +147,9 @@ const columns: ColumnDef<Item>[] = [
   {
     header: "Name",
     accessorKey: "name",
-    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("name")}</div>
+    ),
     size: 180,
     filterFn: multiColumnFilterFn,
     enableHiding: false,
@@ -147,7 +164,8 @@ const columns: ColumnDef<Item>[] = [
     accessorKey: "location",
     cell: ({ row }) => (
       <div>
-        <span className="text-lg leading-none">{row.original.flag}</span> {row.getValue("location")}
+        <span className="text-lg leading-none">{row.original.flag}</span>{" "}
+        {row.getValue("location")}
       </div>
     ),
     size: 180,
@@ -158,7 +176,8 @@ const columns: ColumnDef<Item>[] = [
     cell: ({ row }) => (
       <Badge
         className={cn(
-          row.getValue("status") === "Inactive" && "bg-muted-foreground/60 text-primary-foreground",
+          row.getValue("status") === "Inactive" &&
+            "bg-muted-foreground/60 text-primary-foreground"
         )}
       >
         {row.getValue("status")}
@@ -214,7 +233,7 @@ export default function Component() {
   useEffect(() => {
     async function fetchPosts() {
       const res = await fetch(
-        "https://res.cloudinary.com/dlzlfasou/raw/upload/users-01_fertyx.json",
+        "https://res.cloudinary.com/dlzlfasou/raw/upload/users-01_fertyx.json"
       );
       const data = await res.json();
       setData(data);
@@ -225,7 +244,7 @@ export default function Component() {
   const handleDeleteRows = () => {
     const selectedRows = table.getSelectedRowModel().rows;
     const updatedData = data.filter(
-      (item) => !selectedRows.some((row) => row.original.id === item.id),
+      (item) => !selectedRows.some((row) => row.original.id === item.id)
     );
     setData(updatedData);
     table.resetRowSelection();
@@ -288,7 +307,9 @@ export default function Component() {
       }
     }
 
-    table.getColumn("status")?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
+    table
+      .getColumn("status")
+      ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
   };
 
   return (
@@ -303,10 +324,14 @@ export default function Component() {
               ref={inputRef}
               className={cn(
                 "peer min-w-60 ps-9",
-                Boolean(table.getColumn("name")?.getFilterValue()) && "pe-9",
+                Boolean(table.getColumn("name")?.getFilterValue()) && "pe-9"
               )}
-              value={(table.getColumn("name")?.getFilterValue() ?? "") as string}
-              onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+              value={
+                (table.getColumn("name")?.getFilterValue() ?? "") as string
+              }
+              onChange={(e) =>
+                table.getColumn("name")?.setFilterValue(e.target.value)
+              }
               placeholder="Filter by name or email..."
               type="text"
               aria-label="Filter by name or email"
@@ -333,7 +358,11 @@ export default function Component() {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">
-                <FilterIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
+                <FilterIcon
+                  className="-ms-1 opacity-60"
+                  size={16}
+                  aria-hidden="true"
+                />
                 Status
                 {selectedStatuses.length > 0 && (
                   <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
@@ -344,14 +373,18 @@ export default function Component() {
             </PopoverTrigger>
             <PopoverContent className="w-auto min-w-36 p-3" align="start">
               <div className="space-y-3">
-                <div className="text-muted-foreground text-xs font-medium">Filters</div>
+                <div className="text-muted-foreground text-xs font-medium">
+                  Filters
+                </div>
                 <div className="space-y-3">
                   {uniqueStatusValues.map((value, i) => (
                     <div key={value} className="flex items-center gap-2">
                       <Checkbox
                         id={`${id}-${i}`}
                         checked={selectedStatuses.includes(value)}
-                        onCheckedChange={(checked: boolean) => handleStatusChange(checked, value)}
+                        onCheckedChange={(checked: boolean) =>
+                          handleStatusChange(checked, value)
+                        }
                       />
                       <Label
                         htmlFor={`${id}-${i}`}
@@ -372,7 +405,11 @@ export default function Component() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <Columns3Icon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
+                <Columns3Icon
+                  className="-ms-1 opacity-60"
+                  size={16}
+                  aria-hidden="true"
+                />
                 View
               </Button>
             </DropdownMenuTrigger>
@@ -387,7 +424,9 @@ export default function Component() {
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
                       onSelect={(event) => event.preventDefault()}
                     >
                       {column.id}
@@ -403,7 +442,11 @@ export default function Component() {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button className="ml-auto" variant="outline">
-                  <TrashIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
+                  <TrashIcon
+                    className="-ms-1 opacity-60"
+                    size={16}
+                    aria-hidden="true"
+                  />
                   Delete
                   <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
                     {table.getSelectedRowModel().rows.length}
@@ -419,24 +462,35 @@ export default function Component() {
                     <CircleAlertIcon className="opacity-80" size={16} />
                   </div>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
                       This action cannot be undone. This will permanently delete{" "}
                       {table.getSelectedRowModel().rows.length} selected{" "}
-                      {table.getSelectedRowModel().rows.length === 1 ? "row" : "rows"}.
+                      {table.getSelectedRowModel().rows.length === 1
+                        ? "row"
+                        : "rows"}
+                      .
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                 </div>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteRows}>Delete</AlertDialogAction>
+                  <AlertDialogAction onClick={handleDeleteRows}>
+                    Delete
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           )}
           {/* Add user button */}
           <Button className="ml-auto" variant="outline">
-            <PlusIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
+            <PlusIcon
+              className="-ms-1 opacity-60"
+              size={16}
+              aria-hidden="true"
+            />
             Add user
           </Button>
         </div>
@@ -459,7 +513,7 @@ export default function Component() {
                         <div
                           className={cn(
                             header.column.getCanSort() &&
-                              "flex h-full cursor-pointer items-center justify-between gap-2 select-none",
+                              "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
                           )}
                           onClick={header.column.getToggleSortingHandler()}
                           onKeyDown={(e) => {
@@ -474,7 +528,10 @@ export default function Component() {
                           }}
                           tabIndex={header.column.getCanSort() ? 0 : undefined}
                         >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                           {{
                             asc: (
                               <ChevronUpIcon
@@ -493,7 +550,10 @@ export default function Component() {
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       ) : (
-                        flexRender(header.column.columnDef.header, header.getContext())
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
                       )}
                     </TableHead>
                   );
@@ -504,17 +564,26 @@ export default function Component() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="last:py-0">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -550,19 +619,29 @@ export default function Component() {
         </div>
         {/* Page number information */}
         <div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
-          <p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
+          <p
+            className="text-muted-foreground text-sm whitespace-nowrap"
+            aria-live="polite"
+          >
             <span className="text-foreground">
-              {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}
+              -
               {Math.min(
                 Math.max(
-                  table.getState().pagination.pageIndex * table.getState().pagination.pageSize +
+                  table.getState().pagination.pageIndex *
+                    table.getState().pagination.pageSize +
                     table.getState().pagination.pageSize,
-                  0,
+                  0
                 ),
-                table.getRowCount(),
+                table.getRowCount()
               )}
             </span>{" "}
-            of <span className="text-foreground">{table.getRowCount().toString()}</span>
+            of{" "}
+            <span className="text-foreground">
+              {table.getRowCount().toString()}
+            </span>
           </p>
         </div>
 
@@ -642,11 +721,17 @@ export default function Component() {
 }
 
 function RowActions({ row }: { row: Row<Item> }) {
+  void row;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex justify-end">
-          <Button size="icon" variant="ghost" className="shadow-none" aria-label="Edit item">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="shadow-none"
+            aria-label="Edit item"
+          >
             <EllipsisIcon size={16} aria-hidden="true" />
           </Button>
         </div>

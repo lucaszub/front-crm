@@ -704,6 +704,7 @@ export default function Component() {
 }
 
 function RowActions({ row }: { row: Row<Item> }) {
+  void row;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

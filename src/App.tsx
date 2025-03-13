@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Page1 from "./pages/Pallette";
 import Page2 from "./pages/Page2";
-import Page3 from "./pages/Page3";
+// import Page3 from "./pages/Page3";
 import Component from "./pages/Page3";
 import Page4 from "./pages/Page4";
 
