@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Page1 from "./pages/Pallette";
 import Page2 from "./pages/Page2";
-// import Page3 from "./pages/Page3";
-import Component from "./pages/Page3";
+import { Page3 } from "./pages/Page3";
 import Page4 from "./pages/Page4";
+import Customer_table from "./components/customer_tables";
 
 function App() {
   return (
@@ -37,8 +37,8 @@ function App() {
             {/* Les différentes pages avec contenu conditionnel */}
             <Routes>
               <Route path="/Palette" element={<Page1 />} />
-              <Route path="/page2" element={<Page2 />} />
-              <Route path="/page3" element={<Component />} />
+              <Route path="/page2" element={<Customer_table />} />
+              <Route path="/page3" element={<Page3 />} />
               <Route path="/page4" element={<Page4 />} />
             </Routes>
           </div>
