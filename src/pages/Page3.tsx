@@ -90,6 +90,8 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import DrawerComponent from "@/components/DrawerComponent";
+import { API_URL } from "@/config";
 
 type Item = {
   id: string;
@@ -198,6 +200,12 @@ const columns: ColumnDef<Item>[] = [
 ];
 
 export default function Component() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleDrawerOpenChange = (open: boolean) => {
+    console.log("Drawer open state: ", open); // Vérifie si le changement fonctionne
+    setIsDrawerOpen(open);
+  };
   const id = useId();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -217,7 +225,7 @@ export default function Component() {
   const [data, setData] = useState<Item[]>([]);
   useEffect(() => {
     async function fetchPosts() {
-      const res = await fetch("http://127.0.0.1:8001/customers");
+      const res = await fetch(API_URL);
       const data = await res.json();
       setData(data);
     }
@@ -468,14 +476,23 @@ export default function Component() {
             </AlertDialog>
           )}
           {/* Add user button */}
-          <Button className="ml-auto" variant="outline">
-            <PlusIcon
-              className="-ms-1 opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
+          <Button
+            className="ml-auto "
+            variant="outline"
+            onClick={() => {
+              console.log("Opening drawer...");
+              setIsDrawerOpen(true); // Ouvre le Drawer quand on clique sur ce bouton
+            }}
+          >
+            <PlusIcon className="-ms-1 opacity-60" size={16} />
             Add user
           </Button>
+
+          {/* DrawerComponent : Passage de l'état "open" et de "setOpen" */}
+          <DrawerComponent
+            open={isDrawerOpen}
+            onOpenChange={handleDrawerOpenChange}
+          />
         </div>
       </div>
 
@@ -688,17 +705,6 @@ export default function Component() {
           </Pagination>
         </div>
       </div>
-      <p className="text-muted-foreground mt-4 text-center text-sm">
-        Example of a more complex table made with{" "}
-        <a
-          className="hover:text-foreground underline"
-          href="https://tanstack.com/table"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          TanStack Table
-        </a>
-      </p>
     </div>
   );
 }

@@ -90,7 +90,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-
+import DrawerComponent from "./DrawerComponent";
 type Item = {
   id: string;
   name: string;
@@ -213,6 +213,13 @@ const columns: ColumnDef<Item>[] = [
 ];
 
 export default function Component() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleDrawerOpenChange = (open: boolean) => {
+    console.log("Drawer open state: ", open); // Vérifie si le changement fonctionne
+    setIsDrawerOpen(open);
+  };
+
   const id = useId();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -401,6 +408,7 @@ export default function Component() {
               </div>
             </PopoverContent>
           </Popover>
+
           {/* Toggle columns visibility */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -484,15 +492,25 @@ export default function Component() {
               </AlertDialogContent>
             </AlertDialog>
           )}
+
           {/* Add user button */}
-          <Button className="ml-auto" variant="outline">
-            <PlusIcon
-              className="-ms-1 opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-            Add user
+          <Button
+            className="ml-auto bg-red-500"
+            variant="outline"
+            onClick={() => {
+              console.log("Opening drawer...");
+              setIsDrawerOpen(true); // Ouvre le Drawer quand on clique sur ce bouton
+            }}
+          >
+            <PlusIcon className="-ms-1 opacity-60" size={16} />
+            Add user testvenekvenjnc
           </Button>
+
+          {/* DrawerComponent : Passage de l'état "open" et de "setOpen" */}
+          <DrawerComponent
+            open={isDrawerOpen}
+            onOpenChange={handleDrawerOpenChange}
+          />
         </div>
       </div>
 
