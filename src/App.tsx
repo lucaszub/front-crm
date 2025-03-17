@@ -1,50 +1,53 @@
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+
+// Import des pages
 import Page1 from "./pages/Pallette";
-import Page2 from "./pages/Page2";
-import { Page3 } from "./pages/Page3";
-import Page4 from "./pages/Page4";
+import ClientPage from "./pages/ClientPage";
+import TasksPage from "./pages/TasksPage";
 import Customer_table from "./components/customer_tables";
+import NotesPage from "./pages/NotesPage";
+import Dashboard from "./pages/Dashboard";
+
+function Navbar() {
+  return (
+    <div className="bg-sidebar p-5 border-b gap-5 flex items-center justify-between border-gray-200">
+      <div className="flex items-center gap-3">
+        <SidebarTrigger className="md:hidden" />
+        <h1 className="font-semibold text-lg">CRM Prospection</h1>
+      </div>
+      <div className="flex items-center gap-4">
+        {/* Éléments de navbar supplémentaires (profil, notifications, etc.) */}
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <Router>
-      <div className="flex flex-col h-screen">
-        <div className="bg-sidebar p-5 border-b gap-5 flex border-gray-200">
-          {/* Navbar avec les liens de navigation */}
-          Navbar
-        </div>
+    <SidebarProvider>
+      <Router>
+        <div className="flex flex-col h-screen">
+          <Navbar />
 
-        <div className="h-full flex">
-          <div className=" bg-sidebar w-40 p-5 h-full border-r border-gray-200">
-            {/* Sidebar avec les liens de navigation */}
-            <div className="flex flex-col gap-5">
-              <Link to="/Palette" className="">
-                Palette
-              </Link>
-              <Link to="/page2" className="">
-                Page 2
-              </Link>
-              <Link to="/page3" className="">
-                Page 3
-              </Link>
-              <Link to="/page4" className="">
-                Page 4
-              </Link>
-            </div>
-          </div>
+          <div className="flex h-[calc(100vh-64px)]">
+            <AppSidebar />
 
-          <div className="p-6 bg-background w-full flex flex-col gap-5">
-            {/* Les différentes pages avec contenu conditionnel */}
-            <Routes>
-              <Route path="/Palette" element={<Page1 />} />
-              <Route path="/page2" element={<Customer_table />} />
-              <Route path="/page3" element={<Page3 />} />
-              <Route path="/page4" element={<Page4 />} />
-            </Routes>
+            <main className="flex-1 p-6 overflow-auto">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/Palette" element={<Page1 />} />
+                <Route path="/acceuil" element={<Customer_table />} />
+                <Route path="/fiche-client" element={<ClientPage />} />
+                <Route path="/page4" element={<TasksPage />} />
+                <Route path="/note" element={<NotesPage />} />
+              </Routes>
+            </main>
           </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </SidebarProvider>
   );
 }
 
