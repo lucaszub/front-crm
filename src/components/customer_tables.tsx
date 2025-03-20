@@ -92,6 +92,7 @@ import {
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import DrawerComponent from "@/components/DrawerComponent";
 import { API_URL } from "@/config";
+import { DrawerProfileComponent } from "@/pages/Customers/DrawerProfileComponent";
 
 type Item = {
   id: string;
@@ -99,7 +100,8 @@ type Item = {
   email: string;
   entreprise: string;
   flag: string;
-  status: "Clients" | "Prospet" | "Inactive";
+  numero: string;
+  status: "Actif" | "Prospect" | "Inactive";
   balainteractionnce: string;
 };
 
@@ -120,6 +122,9 @@ const statusFilterFn: FilterFn<Item> = (
   const status = row.getValue(columnId) as string;
   return filterValue.includes(status);
 };
+
+// Déclarez la variable globale en haut du fichier
+let openProfileDrawer: ((userId: string) => void) | null = null;
 
 const columns: ColumnDef<Item>[] = [
   {
@@ -149,7 +154,17 @@ const columns: ColumnDef<Item>[] = [
     header: "Name",
     accessorKey: "name",
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("name")}</div>
+      <div
+        className="font-medium cursor-pointer text-blue-600 hover:underline"
+        onClick={() => {
+          // Utilisez la fonction globale si disponible
+          if (openProfileDrawer) {
+            openProfileDrawer(row.original.id);
+          }
+        }}
+      >
+        {row.getValue("name")}
+      </div>
     ),
     size: 180,
     filterFn: multiColumnFilterFn,
@@ -201,6 +216,25 @@ const columns: ColumnDef<Item>[] = [
 
 export default function Customer_table() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const handleOpenProfile = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsProfileOpen(true);
+  };
+  // Utilisez useEffect pour mettre à jour la référence à la fonction
+  useEffect(() => {
+    openProfileDrawer = handleOpenProfile;
+    return () => {
+      openProfileDrawer = null;
+    };
+  }, []);
+
+  const handleProfileDrawerOpenChange = (open: boolean) => {
+    console.log("Profile drawer open state:", open);
+    setIsProfileOpen(open);
+  };
 
   const handleDrawerOpenChange = (open: boolean) => {
     console.log("Drawer open state: ", open); // Vérifie si le changement fonctionne
@@ -224,12 +258,13 @@ export default function Customer_table() {
 
   const [data, setData] = useState<Item[]>([]);
   useEffect(() => {
-    async function fetchPosts() {
-      const res = await fetch(API_URL);
+    async function fetchClients() {
+      const res = await fetch(`${API_URL}/clients`);
       const data = await res.json();
+      console.log(data);
       setData(data);
     }
-    fetchPosts();
+    fetchClients();
   }, []);
 
   const handleDeleteRows = () => {
@@ -492,6 +527,11 @@ export default function Customer_table() {
           <DrawerComponent
             open={isDrawerOpen}
             onOpenChange={handleDrawerOpenChange}
+          />
+          <DrawerProfileComponent
+            open={isProfileOpen}
+            onOpenChange={handleProfileDrawerOpenChange}
+            userId={selectedUserId ? parseInt(selectedUserId) : null}
           />
         </div>
       </div>

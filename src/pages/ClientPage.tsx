@@ -28,16 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { API_URL } from "@/config";
 
 interface Client {
   id: string;
-  fullName: string;
-  company: string;
+  name: string;
+  entreprise: string;
   role: string;
   status: "Actif" | "Inactif" | "Prospect";
   email: string;
-  phone: string;
-  address: string;
+  numero: string;
   avatarUrl: string;
 }
 
@@ -62,33 +62,11 @@ interface Note {
 }
 
 const ClientPage: React.FC = () => {
-  const clientsData: Record<string, Client> = {
-    "1": {
-      id: "1",
-      fullName: "Jean Dupont",
-      company: "Entreprise ABC",
-      role: "Directeur Commercial",
-      status: "Actif",
-      email: "jean.dupont@entrepriseabc.com",
-      phone: "06 12 34 56 78",
-      address: "15 rue des Lilas, 75001 Paris",
-      avatarUrl: "",
-    },
-    "2": {
-      id: "2",
-      fullName: "Marie Martin",
-      company: "Société XYZ",
-      role: "Responsable Marketing",
-      status: "Prospect",
-      email: "marie.martin@sociétexyz.com",
-      phone: "07 98 76 54 32",
-      address: "8 avenue des Roses, 69002 Lyon",
-      avatarUrl: "",
-    },
-  };
-
-  // État pour le client sélectionné (par défaut "1")
-  const [selectedClientId, setSelectedClientId] = useState<string>("1");
+  const [clients, setClients] = useState<Client[]>([]);
+  const [selectedClientId, setSelectedClientId] = useState<string>("");
+  const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState<string>("");
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] =
     useState<boolean>(false);
@@ -106,72 +84,40 @@ const ClientPage: React.FC = () => {
     description: "",
   });
 
-  const selectedClient = clientsData[selectedClientId];
+  useEffect(() => {
+    async function fetchClients(): Promise<void> {
+      const res = await fetch(`${API_URL}/clients`);
+      const data = await res.json();
+      setClients(data);
+      if (data.length > 0) {
+        setSelectedClientId(data[0].id);
+      }
+    }
+    fetchClients();
+  }, []);
 
-  // Données pour les interactions
-  const [interactions, setInteractions] = useState<Interaction[]>([
-    {
-      id: "1",
-      date: "2023-03-15",
-      type: "Appel",
-      description: "Suivi de la dernière proposition",
-    },
-    {
-      id: "2",
-      date: "2023-03-10",
-      type: "Email",
-      description: "Envoi de la documentation produit",
-    },
-    {
-      id: "3",
-      date: "2023-03-05",
-      type: "Réunion",
-      description: "Présentation des nouveaux services",
-    },
-  ]);
+  useEffect(() => {
+    if (selectedClientId) {
+      async function fetchClientData(): Promise<void> {
+        const [interactionsRes, tasksRes, notesRes] = await Promise.all([
+          fetch(`${API_URL}/clients/${selectedClientId}/interactions`),
+          fetch(`${API_URL}/clients/${selectedClientId}/tasks`),
+          fetch(`${API_URL}/clients/${selectedClientId}/notes`),
+        ]);
+        const [interactionsData, tasksData, notesData] = await Promise.all([
+          interactionsRes.json(),
+          tasksRes.json(),
+          notesRes.json(),
+        ]);
+        setInteractions(interactionsData);
+        setTasks(tasksData);
+        setNotes(notesData);
+      }
+      fetchClientData();
+    }
+  }, [selectedClientId]);
 
-  // Données pour les tâches
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Préparer présentation",
-      dueDate: "2023-03-25",
-      status: "En cours",
-    },
-    {
-      id: "2",
-      title: "Envoyer devis",
-      dueDate: "2023-03-20",
-      status: "À faire",
-    },
-    {
-      id: "3",
-      title: "Appeler pour feedback",
-      dueDate: "2023-03-30",
-      status: "À faire",
-    },
-  ]);
-
-  // Données pour les notes
-  const [notes, setNotes] = useState<Note[]>([
-    {
-      id: "1",
-      date: "2023-03-16",
-      content: "Client intéressé par notre nouvelle offre",
-    },
-    {
-      id: "2",
-      date: "2023-03-12",
-      content: "À recontacter dans 2 semaines pour suivi",
-    },
-    {
-      id: "3",
-      date: "2023-03-08",
-      content: "Préfère être contacté par email plutôt que par téléphone",
-    },
-  ]);
-
-  const handleAddNote = (): void => {
+  const handleAddNote = async (): Promise<void> => {
     if (newNote.trim() === "") return;
 
     const newNoteObj: Note = {
@@ -180,11 +126,21 @@ const ClientPage: React.FC = () => {
       content: newNote,
     };
 
-    setNotes([newNoteObj, ...notes]);
-    setNewNote("");
+    const res = await fetch(`${API_URL}/clients/${selectedClientId}/notes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newNoteObj),
+    });
+
+    if (res.ok) {
+      setNotes([newNoteObj, ...notes]);
+      setNewNote("");
+    }
   };
 
-  const handleAddTask = (): void => {
+  const handleAddTask = async (): Promise<void> => {
     if (newTask.title.trim() === "" || newTask.dueDate === "") return;
 
     const newTaskObj: Task = {
@@ -194,12 +150,22 @@ const ClientPage: React.FC = () => {
       status: "À faire",
     };
 
-    setTasks([...tasks, newTaskObj]);
-    setNewTask({ title: "", dueDate: "" });
-    setIsAddTaskDialogOpen(false);
+    const res = await fetch(`${API_URL}/clients/${selectedClientId}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTaskObj),
+    });
+
+    if (res.ok) {
+      setTasks([...tasks, newTaskObj]);
+      setNewTask({ title: "", dueDate: "" });
+      setIsAddTaskDialogOpen(false);
+    }
   };
 
-  const handleAddInteraction = (): void => {
+  const handleAddInteraction = async (): Promise<void> => {
     if (
       newInteraction.type.trim() === "" ||
       newInteraction.description.trim() === ""
@@ -213,10 +179,27 @@ const ClientPage: React.FC = () => {
       description: newInteraction.description,
     };
 
-    setInteractions([newInteractionObj, ...interactions]);
-    setNewInteraction({ type: "", description: "" });
-    setIsAddInteractionDialogOpen(false);
+    const res = await fetch(
+      `${API_URL}/clients/${selectedClientId}/interactions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newInteractionObj),
+      }
+    );
+
+    if (res.ok) {
+      setInteractions([newInteractionObj, ...interactions]);
+      setNewInteraction({ type: "", description: "" });
+      setIsAddInteractionDialogOpen(false);
+    }
   };
+
+  const selectedClient = clients.find(
+    (client) => client.id === selectedClientId
+  );
 
   return (
     <div className="container mx-auto py-6">
@@ -228,9 +211,9 @@ const ClientPage: React.FC = () => {
               <SelectValue placeholder="Sélectionner un client" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(clientsData).map((client) => (
+              {clients.map((client) => (
                 <SelectItem key={client.id} value={client.id}>
-                  {client.fullName}
+                  {client.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -249,16 +232,14 @@ const ClientPage: React.FC = () => {
                 <Avatar className="h-24 w-24 mb-2">
                   <AvatarImage src={selectedClient.avatarUrl} />
                   <AvatarFallback>
-                    {selectedClient.fullName
+                    {selectedClient.name
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
-                <h2 className="text-xl font-semibold">
-                  {selectedClient.fullName}
-                </h2>
-                <p className="text-gray-500">{selectedClient.company}</p>
+                <h2 className="text-xl font-semibold">{selectedClient.name}</h2>
+                <p className="text-gray-500">{selectedClient.entreprise}</p>
                 <Badge
                   className={
                     selectedClient.status === "Actif"
@@ -282,11 +263,7 @@ const ClientPage: React.FC = () => {
                 </p>
                 <p>
                   <span className="font-medium">Téléphone:</span>{" "}
-                  {selectedClient.phone}
-                </p>
-                <p>
-                  <span className="font-medium">Adresse:</span>{" "}
-                  {selectedClient.address}
+                  {selectedClient.numero}
                 </p>
               </div>
             </CardContent>

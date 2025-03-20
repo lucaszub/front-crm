@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { API_URL } from "@/config";
-
 interface DrawerComponentProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,6 +28,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
     status: "",
     numero: "",
     role: "",
+    avatarUrl: "", // Ajout de ce champ pour correspondre au schéma
     interaction: "",
     note: "",
   });
@@ -36,7 +44,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${API_URL}/clients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,17 +71,24 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
       status: "",
       numero: "",
       role: "",
+      avatarUrl: "", // Ajout de ce champ pour correspondre au schéma
       interaction: "",
       note: "",
     });
-    onOpenChange(false); // Close the drawer
+    onOpenChange(false); // Close the dialog
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} direction="right">
-      <DrawerContent>
-        <div className="p-4 w-full flex flex-col justify-center items-center max-w-lg mx-auto">
-          <h2 className="text-xl font-bold mb-4">Ajouter un nouveau contact</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Ajouter un nouveau contact</DialogTitle>
+          <DialogDescription>
+            Remplissez les informations ci-dessous pour ajouter un nouveau
+            contact.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
           <form className="w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="mb-2">
@@ -143,6 +158,17 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
                 />
               </div>
               <div className="mb-2">
+                <label className="block text-sm font-medium">Avatar URL</label>
+                <Input
+                  type="text"
+                  name="avatarUrl"
+                  className="w-full"
+                  placeholder="Entrez l'URL de l'avatar"
+                  value={formData.avatarUrl}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-2">
                 <label className="block text-sm font-medium">Interaction</label>
                 <Input
                   type="text"
@@ -191,8 +217,8 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
             </div>
           )}
         </div>
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 };
 
