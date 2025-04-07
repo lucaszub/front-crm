@@ -202,8 +202,8 @@ const columns: ColumnDef<Item>[] = [
     accessorKey: "numero",
   },
   {
-    header: "Dernière Intéraction",
-    accessorKey: "interaction",
+    header: "Adresse",
+    accessorKey: "adresse",
   },
   {
     id: "actions",
@@ -340,6 +340,7 @@ export default function Customer_table() {
 
   return (
     <div className="space-y-4">
+      <h1 className="font-semibold leading-none">Clients</h1>
       {/* Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">

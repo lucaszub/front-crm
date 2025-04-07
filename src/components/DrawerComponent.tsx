@@ -5,12 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { API_URL } from "@/config";
 interface DrawerComponentProps {
   open: boolean;
@@ -28,9 +25,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
     status: "",
     numero: "",
     role: "",
-    avatarUrl: "", // Ajout de ce champ pour correspondre au schéma
-    interaction: "",
-    note: "",
+    adresse: "",
   });
 
   const [apiResponse, setApiResponse] = useState(null);
@@ -71,9 +66,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
       status: "",
       numero: "",
       role: "",
-      avatarUrl: "", // Ajout de ce champ pour correspondre au schéma
-      interaction: "",
-      note: "",
+      adresse: "",
     });
     onOpenChange(false); // Close the dialog
   };
@@ -157,36 +150,15 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
                   onChange={handleChange}
                 />
               </div>
+
               <div className="mb-2">
-                <label className="block text-sm font-medium">Avatar URL</label>
+                <label className="block text-sm font-medium">Adresse</label>
                 <Input
                   type="text"
-                  name="avatarUrl"
+                  name="adresse"
                   className="w-full"
-                  placeholder="Entrez l'URL de l'avatar"
-                  value={formData.avatarUrl}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm font-medium">Interaction</label>
-                <Input
-                  type="text"
-                  name="interaction"
-                  className="w-full"
-                  placeholder="Entrez l'interaction"
-                  value={formData.interaction}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="mb-2 col-span-2">
-                <label className="block text-sm font-medium">Note</label>
-                <Textarea
-                  name="note"
-                  className="w-full"
-                  placeholder="Entrez une note"
-                  rows={4}
-                  value={formData.note}
+                  placeholder="Entrez l'adresse"
+                  value={formData.adresse}
                   onChange={handleChange}
                 />
               </div>

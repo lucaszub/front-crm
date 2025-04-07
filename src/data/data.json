@@ -1,0 +1,126 @@
+{
+  "clients": [
+    {
+      "id": "1",
+      "name": "Jean Dupont",
+      "email": "jean.dupont@example.com",
+      "entreprise": "Entreprise ABC",
+      "numero": "+33 6 12 34 56 78",
+      "status": "Actif",
+      "adresse": "10 rue de Paris, 75001 Paris, France",
+      "dernieresInteractions": [
+        {
+          "id": "1",
+          "type": "Email",
+          "date": "2025-03-29T10:00:00Z",
+          "description": "Envoi de la proposition commerciale."
+        },
+        {
+          "id": "2",
+          "type": "Appel",
+          "date": "2025-03-30T15:00:00Z",
+          "description": "Discussion sur les besoins du client."
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Marie Martin",
+      "email": "marie.martin@example.com",
+      "entreprise": "Société XYZ",
+      "numero": "+33 6 98 76 54 32",
+      "status": "Prospect",
+      "adresse": "20 avenue des Champs, 75008 Paris, France",
+      "dernieresInteractions": [
+        {
+          "id": "3",
+          "type": "Réunion",
+          "date": "2025-03-31T14:00:00Z",
+          "description": "Présentation des services."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Pierre Durand",
+      "email": "pierre.durand@example.com",
+      "entreprise": "Groupe DEF",
+      "numero": "+33 6 45 67 89 01",
+      "status": "Inactive",
+      "adresse": "30 boulevard Haussmann, 75009 Paris, France",
+      "dernieresInteractions": []
+    }
+  ],
+  "notes": [
+    {
+      "id": "1",
+      "content": "Réunion initiale avec le client pour discuter des besoins.",
+      "clientId": "1",
+      "createdAt": "2025-03-30T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "content": "Appel de suivi pour clarifier les spécifications.",
+      "clientId": "2",
+      "createdAt": "2025-03-31T14:30:00Z"
+    },
+    {
+      "id": "3",
+      "content": "Envoi de la proposition commerciale par email.",
+      "clientId": "1",
+      "createdAt": "2025-04-01T09:15:00Z"
+    }
+  ],
+  "rdvs": [
+    {
+      "id": "1",
+      "title": "Réunion de lancement",
+      "clientId": "1",
+      "date": "2025-04-03T10:00:00Z",
+      "location": "Bureau du client",
+      "description": "Présentation du projet et des objectifs."
+    },
+    {
+      "id": "2",
+      "title": "Appel de suivi",
+      "clientId": "2",
+      "date": "2025-04-04T14:30:00Z",
+      "location": "Téléphone",
+      "description": "Discussion sur les prochaines étapes."
+    },
+    {
+      "id": "3",
+      "title": "Présentation des résultats",
+      "clientId": "1",
+      "date": "2025-04-05T09:15:00Z",
+      "location": "Salle de réunion",
+      "description": "Présentation des résultats de l'analyse."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Préparer la présentation",
+      "clientId": "1",
+      "completed": false,
+      "dueDate": "2025-04-02T18:00:00Z",
+      "priority": "High"
+    },
+    {
+      "id": "2",
+      "title": "Envoyer le devis",
+      "clientId": "2",
+      "completed": true,
+      "dueDate": "2025-03-31T12:00:00Z",
+      "priority": "Medium"
+    },
+    {
+      "id": "3",
+      "title": "Planifier une réunion",
+      "clientId": "1",
+      "completed": false,
+      "dueDate": "2025-04-04T09:00:00Z",
+      "priority": "Low"
+    }
+  ]
+}
