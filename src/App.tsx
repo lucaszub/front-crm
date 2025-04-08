@@ -12,13 +12,19 @@ import Todo from "./pages/Todo";
 
 function Navbar() {
   return (
-    <div className="bg-sidebar w-screen  p-5 border-b gap-5 flex items-center justify-between border-gray-200">
-      <div className="flex items-center  gap-3">
+    <div className="bg-sidebar w-screen p-5 border-b gap-5 flex items-center justify-between border-gray-200">
+      <div className="flex items-center gap-3">
         <SidebarTrigger className="md:hidden" />
         <h1 className="font-semibold text-lg">CRM Prospection</h1>
       </div>
       <div className="flex items-center gap-4">
-        {/* Éléments de navbar supplémentaires (profil, notifications, etc.) */}
+        {/* Bouton d'authentification */}
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+          onClick={() => alert("Authentification à gérer")}
+        >
+          Se connecter
+        </button>
       </div>
     </div>
   );
